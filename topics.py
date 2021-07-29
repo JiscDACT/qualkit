@@ -32,10 +32,21 @@ stop_words.extend(
      "these", "they", "this", "those", "through", "to", "too", "under", "up", "use", "using", "used", "underway",
      "very", "want", "was", "way", "we", "well", "were", "what", "when", "where", "which", "while", "whilst", "who",
      "will", "with", "would", "you", "your",
+     "nothing", "idk"
      'etc', 'via', 'eg', 'e g', 'ie'])
 
 # initiate nltk lemmatiser
 wordnet_lemmatizer = WordNetLemmatizer()
+
+
+def replace_domain_terms(text):
+    vle = ['blackboard', 'moodle', 'canvas']
+    online_meeting_tool = ['zoom', 'blackboard collaborate', 'teams', 'microsoft teams', 'big blue button']
+    for word in vle:
+        text = text.replace(word, 'vle')
+    for word in online_meeting_tool:
+        text = text.replace(word, 'online_meeting_tool')
+    return text
 
 
 def clean(data):
@@ -46,6 +57,10 @@ def clean(data):
     df['cleaned'] = df[0].str.lower().str.replace('[^a-z]', ' ').str.replace(' +', ' ').str.strip()
     df['cleaned'].replace('', np.nan, inplace=True)
     df.dropna(inplace=True)
+
+    # Domain synonyms
+    df['cleaned'] = df['cleaned'].apply(lambda x: replace_domain_terms(x))
+
     return df
 
 
