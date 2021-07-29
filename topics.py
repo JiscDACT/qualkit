@@ -7,11 +7,9 @@ from nltk import ngrams
 from rake_nltk import Rake
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.decomposition import LatentDirichletAllocation
-from nltk.sentiment import SentimentIntensityAnalyzer
 import collections
 
 nltk.download('wordnet')
-nltk.download('vader_lexicon')
 
 # initiate stopwords from nltk
 stop_words = stopwords.words('english')
@@ -39,47 +37,6 @@ stop_words.extend(
 wordnet_lemmatizer = WordNetLemmatizer()
 
 
-def replace_domain_terms(text):
-    vle = ['blackboard', 'moodle', 'canvas']
-    online_meeting_tool = ['zoom', 'blackboard collaborate', 'teams', 'microsoft teams', 'big blue button']
-    for word in vle:
-        text = text.replace(word, 'vle')
-    for word in online_meeting_tool:
-        text = text.replace(word, 'online_meeting_tool')
-    return text
-
-
-def clean(data):
-    df = data.copy()
-    df.dropna(inplace=True)
-
-    # case text as lowercase, remove punctuation, remove extra whitespace in string and on both sides of string
-    df['cleaned'] = df[0].str.lower().str.replace('[^a-z]', ' ').str.replace(' +', ' ').str.strip()
-    df['cleaned'].replace('', np.nan, inplace=True)
-    df.dropna(inplace=True)
-
-    # Domain synonyms
-    df['cleaned'] = df['cleaned'].apply(lambda x: replace_domain_terms(x))
-
-    return df
-
-
-def add_sentiment_score(data, filter=None):
-    data = data.copy()
-    sia = SentimentIntensityAnalyzer()
-    data['sentiment'] = data[0].apply(lambda x: sia.polarity_scores(x)['compound'])
-    if filter == 'positive':
-        data.drop(data.index[data['sentiment'] < 0.3], inplace=True)
-    elif filter == 'negative':
-        data.drop(data.index[data['sentiment'] > 0], inplace=True)
-    elif filter == 'neutral':
-        data.drop(data.index[data['sentiment'] > 0.3], inplace=True)
-        data.drop(data.index[data['sentiment'] < 0], inplace=True)
-    else:
-        pass
-    return data
-
-
 def convert_to_tokens(data):
     df = data.copy()
     # tokenise string
@@ -97,9 +54,7 @@ def convert_to_tokens(data):
     return df
 
 
-def create_lda_model(data, num_topics=10):
-    df = data.copy()
-
+def create_lda_model(num_topics=10):
     # initisalise LDA Model
     lda_model = LatentDirichletAllocation(n_components=num_topics, # number of topics
                                       random_state=10,          # random state
@@ -110,10 +65,11 @@ def create_lda_model(data, num_topics=10):
     return lda_model
 
 
+# Remove duplicates from the keywords extracted from the topic modelling output.
+# This is because we want to limit the amount of Ideas that go across multiple topics.
+# We want to stick to 1 idea to 1 topic
 def remove_duplicates(topic_keywords):
-    # Remove duplicates from the keywords extracted from the topic modelling output.
-    # This is because we want to limit the amount of Ideas that go across multiple topics.
-    # We want to stick to 1 idea to 1 topic
+
     dupes = []
 
     for i in topic_keywords:
@@ -225,14 +181,33 @@ def add_keywords_to_topics(data):
     return all_results
 
 
-def lda(data, sentiment='positive', num_topics=12):
+#
+# Extracts the features from the trained model along with
+# their weights
+#
+def lda_features(lda_model, vectorizer):
+    top_feature_data = []
+    for topic_idx, topic in enumerate(lda_model.components_):
+        top_features_ind = topic.argsort()[:-10 - 1:-1]
+        top_features = [vectorizer.get_feature_names()[i] for i in top_features_ind]
+        weights = topic[top_features_ind]
+        for i in range(0, topic_idx+1):
+            top_feature_data.append(
+                {
+                    "topic": topic_idx+1,
+                    "features": top_features[i],
+                    "weights": weights[i]
+                }
+            )
+    return pd.DataFrame(top_feature_data)
 
-    df = clean(data)
-    df = add_sentiment_score(df)
+
+def lda(data, sentiment='positive', num_topics=12, output='default'):
+    df = data.copy()
     df = convert_to_tokens(df)
 
     # Build the model
-    lda_model = create_lda_model(df)
+    lda_model = create_lda_model(num_topics=num_topics)
 
     # initialise the count vectorizer
     vectorizer = CountVectorizer(analyzer='word', ngram_range=(1, 2))
@@ -245,6 +220,9 @@ def lda(data, sentiment='positive', num_topics=12):
 
     # Apply model to vectorised tokens
     lda_output = lda_model.fit_transform(vectorised)
+
+    if output == 'features':
+        return lda_features(lda_model, vectorizer)
 
     # Add column names
     topic_names = ["Topic" + str(i) for i in range(1, lda_model.n_components + 1)]
@@ -298,17 +276,5 @@ def lda_with_keywords(data):
     #all_results.append({'score': 1000, 'topic_number' : 0.0, 'term' : '', 'parent' : ''})
     all_topics_df = pd.DataFrame(all_results)
     all_topics_df = all_topics_df.sort_values('topic_number', ascending=True)
-    all_topics_df = all_topics_df.loc[all_topics_df['score'] > 10.0]
 
     return all_topics_df
-
-
-# read data
-data = pd.read_csv('data/feedback.csv', header = None)
-
-df = lda(data)
-df.to_csv('output/lda.csv')
-df = lda_with_keywords(df)
-df.to_csv('output/keywords.csv')
-
-
