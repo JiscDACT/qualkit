@@ -11,14 +11,15 @@ def replace_domain_terms(text):
     return text
 
 
-def clean(data):
+def clean(data, column=0) -> object:
     df = data.copy()
-    df.dropna(inplace=True)
 
     # case text as lowercase, remove punctuation, remove extra whitespace in string and on both sides of string
-    df['cleaned'] = df[0].str.lower().str.replace('[^a-z]', ' ').str.replace(' +', ' ').str.strip()
+    df['cleaned'] = df[column].str.lower().str.replace('[^a-z]', ' ').str.replace(' +', ' ').str.strip()
+
+    # if the result is an empty string, or null, remove the row
     df['cleaned'].replace('', np.nan, inplace=True)
-    df.dropna(inplace=True)
+    df.dropna(subset=['cleaned'], inplace=True)
 
     # Domain synonyms
     df['cleaned'] = df['cleaned'].apply(lambda x: replace_domain_terms(x))

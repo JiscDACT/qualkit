@@ -39,8 +39,9 @@ wordnet_lemmatizer = WordNetLemmatizer()
 
 def convert_to_tokens(data):
     df = data.copy()
+
     # tokenise string
-    df['tokens'] = df.apply(lambda x: nltk.word_tokenize(x['cleaned']), axis=1)
+    df['tokens'] = df['cleaned'].apply(lambda x: nltk.word_tokenize(x))
 
     # remove stopwords
     df['tokens'] = df['tokens'].apply(lambda x: [item for item in x if item not in stop_words])
@@ -50,7 +51,8 @@ def convert_to_tokens(data):
 
     # Remove nulls
     df['tokens'].replace('', np.nan, inplace=True)
-    df.dropna(inplace=True)
+    df.dropna(subset=['tokens'], inplace=True)
+
     return df
 
 
