@@ -39,7 +39,7 @@ df.rename(columns={
     "Dominant_topic": "Q26 dominant topic",
     "Topic_keywords": "Q26 topic keywords"
 }, inplace=True)
-df.drop(columns=['Topic_number', 'Topic1','Topic2','Topic3','Topic4','Topic5','Topic6','Topic7','Topic8','Topic9','Topic10', 'cleaned', 'tokens'])
+df.drop(columns=['Topic_number', 'Topic1','Topic2','Topic3','Topic4','Topic5','Topic6','Topic7','Topic8','Topic9','Topic10', 'cleaned', 'tokens'], inplace=True)
 df.dropna(subset=['Unique Response Number'], inplace=True)
 
 df2 = clean(data, 'Q18')
