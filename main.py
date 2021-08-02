@@ -2,18 +2,19 @@ import pandas as pd
 from clean import clean
 from topics import lda, lda_with_keywords
 from sentiment import add_sentiment_score
+from keywords import add_keywords
+from anchored_topic_model import anchored_topic_model
 
 # 1. LDA
 
 # read data
 # data = pd.read_csv('data/feedback.csv', header = None)
 # data = clean(data)
-# print(data.columns.values.tolist())
 # df = lda(data, num_topics=7)
 # df.to_csv('output/lda.csv')
-#
+
 # df = lda_with_keywords(df)
-# df.to_csv('output/keywords.csv')
+# df.to_csv('output/lda_with_keywords.csv')
 #
 # df = lda(data, num_topics=7, output='features')
 # df.to_csv('output/test.csv')
@@ -30,29 +31,86 @@ from sentiment import add_sentiment_score
 # data.to_csv('output/sentiment.csv')
 
 # 3 mix metadata with tokenisation and/or keyword extraction "who mentions what"
+# data = pd.read_csv('data/dei_student_all.csv')
+# data['Unique Response Number'] = data['Unique Response Number'].astype(str)
+#
+# df = clean(data, 'Q26')
+# df = lda(df, num_topics=10)
+# df.rename(columns={
+#     "Dominant_topic": "Q26 dominant topic",
+#     "Topic_keywords": "Q26 topic keywords"
+# }, inplace=True)
+# df.drop(columns=['Topic_number', 'Topic1','Topic2','Topic3','Topic4','Topic5','Topic6','Topic7','Topic8','Topic9','Topic10', 'cleaned', 'tokens'], inplace=True)
+# df.dropna(subset=['Unique Response Number'], inplace=True)
+#
+# df2 = clean(data, 'Q18')
+# df2 = lda(df2, num_topics=10)
+# df2.rename(columns={
+#     "Dominant_topic": "Q18 dominant topic",
+#     "Topic_keywords": "Q18 topic keywords"
+# }, inplace=True)
+# df2 = df2[['Unique Response Number','Q18 dominant topic', 'Q18 topic keywords']].copy()
+# df2.dropna(subset=['Unique Response Number'], inplace=True)
+#
+# df['Unique Response Number'] = df['Unique Response Number'].astype(str)
+# df2['Unique Response Number'] = df2['Unique Response Number'].astype(str)
+# df3 = pd.merge(df, df2, on=['Unique Response Number'], how='inner')
+#
+# df3.to_csv('output/lda_2.csv')
+
+#4 keywords only
+# data = pd.read_csv('data/dei_student_all.csv')
+# data['Unique Response Number'] = data['Unique Response Number'].astype(str)
+# df = clean(data, 'Q26')
+# df = add_keywords(df, 'cleaned')
+# df.dropna(subset=['Unique Response Number'], inplace=True)
+# df.to_csv("output/keywords.csv")
+
+#  5. Using an anchored topic model
+#  In this example we start by creating a 'naive' topic model to get an idea of the content.
+#  We then apply domain knowledge to create a set of "anchor" terms for the topics, and re-run the model
+#  using the anchors as a guide to the algorithm creating the model.
+#  Finally we create a topic model for the documents that don't match the resulting model, to
+#  see if we need to modify the anchor terms.
+#
 data = pd.read_csv('data/dei_student_all.csv')
 data['Unique Response Number'] = data['Unique Response Number'].astype(str)
+data = clean(data, 'Q26')
 
-df = clean(data, 'Q26')
-df = lda(df, num_topics=10)
-df.rename(columns={
-    "Dominant_topic": "Q26 dominant topic",
-    "Topic_keywords": "Q26 topic keywords"
-}, inplace=True)
-df.drop(columns=['Topic_number', 'Topic1','Topic2','Topic3','Topic4','Topic5','Topic6','Topic7','Topic8','Topic9','Topic10', 'cleaned', 'tokens'], inplace=True)
-df.dropna(subset=['Unique Response Number'], inplace=True)
+print("\nNon-anchored\n")
+df1 = anchored_topic_model(data, 'cleaned', number_of_topics=12, print_topic_details=True)
 
-df2 = clean(data, 'Q18')
-df2 = lda(df2, num_topics=10)
-df2.rename(columns={
-    "Dominant_topic": "Q18 dominant topic",
-    "Topic_keywords": "Q18 topic keywords"
-}, inplace=True)
-df2 = df2[['Unique Response Number','Q18 dominant topic', 'Q18 topic keywords']].copy()
-df2.dropna(subset=['Unique Response Number'], inplace=True)
+topic_names = [
+    'Library resources',
+    'Course materials',
+    'Live/in-person',
+    'Help & support',
+    'Workload',
+    'Technology',
+    'Wifi and equipment',
+    'Communication',
+    'Interactivity',
+    'Seminars and small groups',
+    'Nothing/all OK',
+    'Organisation']
+anchors = [
+    ["resources", "library", "books", 'access'],
+    ["pre recorded", "recorded", 'record', "pre recorded lectures", "videos","content",'materials','powerpoint','material','accessible'],
+    ["live lectures", "face", "physical", 'on campus', 'in person','live lessons','live','less online'],
+    ["help", "support", 'motivate', "guidance", "supportive", "mental health", 'training','safe'],
+    ["time", 'pressure', "workload", "slow", "overload", "deadlines", "work", "pace", "deadline", 'breaks','reduce','shorter'],
+    ["vle", "platform", 'software', 'interface', 'platforms', 'online_meeting_tool','technology'],
+    ['wifi', "connection", "internet", "data", 'laptops', 'laptop', 'computers', "equipment"],
+    ['explain', 'contact', "emails", "communication", "communicate", "personal tutor", "better communication", 'clear', 'clearer', 'clarity', 'one one', "feedback",'ask questions'],
+    ['participation','involvement','interactive', 'interactivity', 'engage', 'engagement', 'engaging', 'interesting', 'interaction', 'discussion', 'quizzes', 'quiz', 'activity', 'activities'],
+    ['personal', 'seminars', 'tutorials', 'tutorial', 'group', 'groupwork', 'small groups', 'workshops', 'smaller'],
+    ['happy', 'nothing', 'don t know', 'not sure', 'i dont know', 'idk', 'keep same', 'good', 'none', 'no idea', 'dunno'],
+    ['organised', 'organized', 'organisation', 'structure', 'structured', 'planned', 'timetable', 'detailed','manage','schedule']
+]
+print("\nAnchored\n")
+df2 = anchored_topic_model(data, 'cleaned', topic_names=topic_names, anchors=anchors, print_topic_details=True)
+df2.to_csv('output/corex.csv')
 
-df['Unique Response Number'] = df['Unique Response Number'].astype(str)
-df2['Unique Response Number'] = df2['Unique Response Number'].astype(str)
-df3 = pd.merge(df, df2, on=['Unique Response Number'], how='inner')
-
-df3.to_csv('output/lda_2.csv')
+print("\nUnmatched\n")
+unmatched = df2[(df2['Topic label'] == 'No matching topic')].copy()
+df2 = anchored_topic_model(unmatched, 'cleaned', number_of_topics=12, print_topic_details=True)

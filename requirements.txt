@@ -2,3 +2,5 @@ pandas~=1.1.5
 numpy~=1.19.5
 nltk~=3.6.2
 scikit-learn~=0.24.2
+guidedlda~=2.0.0.dev22
+corextopic~=1.1
