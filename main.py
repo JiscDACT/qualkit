@@ -5,7 +5,7 @@ from sentiment import add_sentiment_score
 from keywords import add_keywords
 from anchored_topic_model import anchored_topic_model
 
-# 1. LDA
+# LDA with keywords
 
 # read data
 # data = pd.read_csv('data/feedback.csv', header = None)
@@ -19,16 +19,6 @@ from anchored_topic_model import anchored_topic_model
 # df = lda(data, num_topics=7, output='features')
 # df.to_csv('output/test.csv')
 
-# 2 sentiments
-
-# data = pd.read_csv('data/dei_subset.csv')
-# data = clean(data, 'Positive')
-# data = add_sentiment_score(data, 'Positive')
-# data['positive_score'] = data['sentiment']
-# data = clean(data, 'Negative')
-# data = add_sentiment_score(data, 'Negative')
-# data['negative_score'] = data['sentiment']
-# data.to_csv('output/sentiment.csv')
 
 # 3 mix metadata with tokenisation and/or keyword extraction "who mentions what"
 # data = pd.read_csv('data/dei_student_all.csv')
@@ -58,23 +48,33 @@ from anchored_topic_model import anchored_topic_model
 #
 # df3.to_csv('output/lda_2.csv')
 
-#4 keywords only
+# 1. Extracting keywords
+# ======================
+# In this example we just extract keywords and key phrases for each response and add them to the output
+# This is useful for exploring the use of particular key phrases in the responses
+
 # data = pd.read_csv('data/dei_student_all.csv')
 # data['Unique Response Number'] = data['Unique Response Number'].astype(str)
+
+# always clean data first! The output is called "cleaned" in the result rather than overwrite the original data
+
 # df = clean(data, 'Q26')
 # df = add_keywords(df, 'cleaned')
 # df.dropna(subset=['Unique Response Number'], inplace=True)
 # df.to_csv("output/keywords.csv")
 
-#  5. Using an anchored topic model
+#  2. Using an anchored topic model
+#  ================================
 #  In this example we start by creating a 'naive' topic model to get an idea of the content.
 #  We then apply domain knowledge to create a set of "anchor" terms for the topics, and re-run the model
 #  using the anchors as a guide to the algorithm creating the model.
 #  Finally we create a topic model for the documents that don't match the resulting model, to
 #  see if we need to modify the anchor terms.
-#
+
 data = pd.read_csv('data/dei_student_all.csv')
 data['Unique Response Number'] = data['Unique Response Number'].astype(str)
+
+# always clean data first! The output is called "cleaned" in the result rather than overwrite the original data
 data = clean(data, 'Q26')
 
 print("\nNon-anchored\n")
@@ -114,3 +114,17 @@ df2.to_csv('output/corex.csv')
 print("\nUnmatched\n")
 unmatched = df2[(df2['Topic label'] == 'No matching topic')].copy()
 df2 = anchored_topic_model(unmatched, 'cleaned', number_of_topics=12, print_topic_details=True)
+
+# 3 Sentiment scoring
+# In this example we append a sentiment score to several fields
+# We've re-labelled the "best thing" and "worst thing" questions to "Positive" and "Negative"
+# and then calculate the sentiment score for each answer.
+
+# data = pd.read_csv('data/dei_subset.csv')
+# data = clean(data, 'Positive')
+# data = add_sentiment_score(data, 'Positive')
+# data['positive_score'] = data['sentiment']
+# data = clean(data, 'Negative')
+# data = add_sentiment_score(data, 'Negative')
+# data['negative_score'] = data['sentiment']
+# data.to_csv('output/sentiment.csv')
