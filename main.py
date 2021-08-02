@@ -1,5 +1,5 @@
 import pandas as pd
-from clean import clean
+from clean import clean, remove_dont_knows
 from topics import lda, lda_with_keywords
 from sentiment import add_sentiment_score
 from keywords import add_keywords
@@ -76,6 +76,7 @@ data['Unique Response Number'] = data['Unique Response Number'].astype(str)
 
 # always clean data first! The output is called "cleaned" in the result rather than overwrite the original data
 data = clean(data, 'Q26')
+data = remove_dont_knows(data, 'cleaned')
 
 print("\nNon-anchored\n")
 df1 = anchored_topic_model(data, 'cleaned', number_of_topics=12, print_topic_details=True)
@@ -90,22 +91,22 @@ topic_names = [
     'Wifi and equipment',
     'Communication',
     'Interactivity',
-    'Seminars and small groups',
-    'Nothing/all OK',
+    'Personal & small group learning',
+    'Nothing/OK',
     'Organisation']
 anchors = [
     ["resources", "library", "books", 'access'],
-    ["pre recorded", "recorded", 'record', "pre recorded lectures", "videos","content",'materials','powerpoint','material','accessible'],
+    ["pre recorded", "recorded", 'record', "pre recorded lectures", "video", "videos","content",'materials','powerpoint','material','accessible', 'subtitles'],
     ["live lectures", "face", "physical", 'on campus', 'in person','live lessons','live','less online'],
-    ["help", "support", 'motivate', "guidance", "supportive", "mental health", 'training','safe'],
-    ["time", 'pressure', "workload", "slow", "overload", "deadlines", "work", "pace", "deadline", 'breaks','reduce','shorter'],
-    ["vle", "platform", 'software', 'interface', 'platforms', 'online_meeting_tool','technology'],
-    ['wifi', "connection", "internet", "data", 'laptops', 'laptop', 'computers', "equipment"],
-    ['explain', 'contact', "emails", "communication", "communicate", "personal tutor", "better communication", 'clear', 'clearer', 'clarity', 'one one', "feedback",'ask questions'],
+    ["help", "support", 'motivate', "guidance", "supportive", "mental health", 'training', 'safe', 'more guidance', 'more information'],
+    ["time", 'pressure', "workload", "slow", "overload", "deadlines", "work", "pace", "deadline", 'breaks','reduce','shorter','slower'],
+    ["vle", "platform", 'software', 'interface', 'platforms', 'onlinemeetingtool','technology', 'system'],
+    ['wifi', "connection", "internet", "data", 'laptops', 'laptop', 'computers', "equipment", 'specialist software', 'specialised software'],
+    ['reply','response','explain','respond', 'contact','listen', "emails", "communication", "communicate", "personal tutor", "better communication", 'clear', 'clearer', 'clarity', "feedback",'ask questions'],
     ['participation','involvement','interactive', 'interactivity', 'engage', 'engagement', 'engaging', 'interesting', 'interaction', 'discussion', 'quizzes', 'quiz', 'activity', 'activities'],
-    ['personal', 'seminars', 'tutorials', 'tutorial', 'group', 'groupwork', 'small groups', 'workshops', 'smaller'],
-    ['happy', 'nothing', 'don t know', 'not sure', 'i dont know', 'idk', 'keep same', 'good', 'none', 'no idea', 'dunno'],
-    ['organised', 'organized', 'organisation', 'structure', 'structured', 'planned', 'timetable', 'detailed','manage','schedule']
+    ['personal', 'individual', 'seminars', 'tutorials', 'tutorial', 'group', 'groupwork', 'small groups', 'workshops', 'smaller', 'onetoone'],
+    ['happy', 'nothing', 'keep same', 'keep doing', 'good', 'same', 'continue', 'great', 'fine'],
+    ['organised', 'organized', 'organisation', 'structure', 'structured', 'planned', 'timetable', 'detailed','manage','schedule', 'consistent']
 ]
 print("\nAnchored\n")
 df2 = anchored_topic_model(data, 'cleaned', topic_names=topic_names, anchors=anchors, print_topic_details=True)
