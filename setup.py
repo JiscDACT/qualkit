@@ -1,6 +1,6 @@
 from setuptools import setup
 
-VERSION = '0.0.2'
+VERSION = '0.0.3'
 
 setup(
     name='qualkit',
@@ -14,11 +14,11 @@ setup(
     description='Python qualitative analysis toolkit with utilities and simplified wrappers for common algorithms',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    install_requires=['pandas~=1.1.5'
-                        'numpy~=1.19.5'
-                        'nltk~=3.6.2'
-                        'scikit-learn~=0.24.2'
-                        'corextopic~=1.1'],
+    install_requires=['pandas>=1.1.5',
+                        'numpy>=1.19.5',
+                        'nltk>=3.6.2',
+                        'scikit-learn>=0.24.2',
+                        'corextopic>=1.1'],
     entry_points={
     },
     classifiers=[
