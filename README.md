@@ -1,4 +1,4 @@
-# DACT Qualitative Analyis Toolkit (dact-qualkit)
+# DACT Qualitative Analyis Toolkit (qualkit)
 
 This project is a collection of utilities for conducting qualitative
 analysis.
@@ -19,7 +19,7 @@ For more details on each module, see the 'docs' folder.
 
 Install using:
 
-    pip install dactqal
+    pip install qualkit
 
 Or add 'dactqal' to your requirements.txt file, or add as
 a dependency in project properties in PyCharm.
