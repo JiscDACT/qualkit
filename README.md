@@ -21,7 +21,7 @@ Install using:
 
     pip install qualkit
 
-Or add 'dactqal' to your requirements.txt file, or add as
+Or add 'qualkit' to your requirements.txt file, or add as
 a dependency in project properties in PyCharm.
 
 ## References
