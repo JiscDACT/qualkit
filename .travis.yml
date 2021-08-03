@@ -10,7 +10,7 @@ jobs:
         deploy:
           provider: pypi
           user: $TEST_PYPI_USER
-          password: $TEST_PYPI_PASS
+          password: $TEST_PYPI_PASSWORD
           distributions: "sdist bdist_wheel"
           skip_existing: true
           on:
