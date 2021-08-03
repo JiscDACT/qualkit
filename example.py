@@ -1,9 +1,9 @@
 import pandas as pd
-from clean import clean, remove_dont_knows
-from anchored_topic_model import anchored_topic_model
+from qualkit.clean import clean, remove_dont_knows
+from qualkit.anchored_topic_model import anchored_topic_model
 
-#  2. Using an anchored topic model
-#  ================================
+#  Using an anchored topic model
+#  =============================
 #  In this example we start by creating a 'naive' topic model to get an idea of the content.
 #  We then apply domain knowledge to create a set of "anchor" terms for the topics, and re-run the model
 #  using the anchors as a guide to the algorithm creating the model.

@@ -20,7 +20,6 @@ setup(
                         'scikit-learn~=0.24.2'
                         'corextopic~=1.1'],
     entry_points={
-        'console_scripts': ['qualkit=qualkit:main'],
     },
     classifiers=[
         'Development Status :: 4 - Beta',

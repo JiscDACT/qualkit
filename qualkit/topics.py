@@ -7,7 +7,8 @@ from rake_nltk import Rake
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.decomposition import LatentDirichletAllocation
 import collections
-from stopwords import stopwords
+
+from qualkit.stopwords import stopwords
 
 nltk.download('wordnet')
 

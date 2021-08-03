@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from corextopic import corextopic as ct
-from stopwords import stopwords
+from qualkit.stopwords import stopwords
 
 
 def anchored_topic_model(data, column, topic_names=None, anchors=None, number_of_topics=10, print_topic_details=False):

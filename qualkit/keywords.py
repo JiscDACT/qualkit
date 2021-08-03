@@ -2,7 +2,7 @@ from rake_nltk import Rake
 import nltk
 from nltk.stem import WordNetLemmatizer
 
-from stopwords import stopwords
+from qualkit.stopwords import stopwords
 
 nltk.download('wordnet')
 
