@@ -38,7 +38,7 @@ def replace_dont_knows(text, replacement):
     for word in terms:
         text = text.replace(word, replacement)
 
-    terms = ["i have no idea", "i am not sure", "im not sure", "i m not sure", "unsure", "not sure", "not too sure", "no idea", "not a clue", "no clue"]
+    terms = ['i am not really sure', 'im not too sure', 'im not really sure', 'not really sure', "i have no idea", "i am not sure", "im not sure", "i m not sure", "im unsure", "unsure", "not sure", "not too sure", "no idea", "not a clue", "no clue"]
     for word in terms:
         text = text.replace(word, replacement)
 
@@ -52,10 +52,18 @@ def replace_dont_knows(text, replacement):
 def replace_all_domain_terms(text):
     onetoone = ['1 2 1', '1 on 1', '1 to 1', '1-1', '1on1', '1:1', '1to1']
     vle = ['blackboard', 'moodle', 'canvas']
+    online = ['online learning', 'learning online',
+              'learn online', 'teaching online',
+              'online teaching', 'online courses', 'online course',
+              'online classes'
+              'online class', 'online lessons', 'online lesson',
+              'online lectures', 'online lecture'
+              ]
     online_meeting_tool = ['zoom', 'blackboard collaborate', 'microsoft teams', 'big blue button', 'teams']
 
     text = replace_domain_terms(text, onetoone, 'onetoone')
     text = replace_domain_terms(text, vle, 'vle')
+    text = replace_domain_terms(text, online, 'online learning')
     text = replace_domain_terms(text, online_meeting_tool, 'onlinemeetingtool')
 
     return text
