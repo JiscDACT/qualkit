@@ -1,19 +1,17 @@
-jobs:
-  include:
-      - language: python
-        python: 3.7
-        install:
-          - pip install pipenv
-          - pipenv install --dev --skip-lock
-        script:
-          pipenv run pytest -v
-        deploy:
-          provider: pypi
-          user: $TEST_PYPI_USER
-          password: $TEST_PYPI_PASSWORD
-          distributions: "sdist bdist_wheel"
-          skip_existing: true
-          on:
-            all_branches: true
-            tags: true
+language: python
+python: 3.7
+install:
+  - pip install pipenv
+  - pipenv install --dev --skip-lock
+script:
+  pipenv run pytest -v
+deploy:
+  provider: pypi
+  user: $TEST_PYPI_USER
+  password: $TEST_PYPI_PASSWORD
+  distributions: "sdist bdist_wheel"
+  skip_existing: true
+  on:
+    all_branches: true
+    tags: true
 
