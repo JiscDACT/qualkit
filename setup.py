@@ -1,6 +1,6 @@
 from setuptools import setup
 
-VERSION = '0.0.3'
+VERSION = '0.0.6'
 
 setup(
     name='qualkit',
