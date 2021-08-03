@@ -1,6 +1,10 @@
 import numpy as np
 from nltk.stem import WordNetLemmatizer
 from nltk import word_tokenize
+import nltk
+
+nltk.download('wordnet')
+nltk.download('punkt')
 
 wordnet_lemmatizer = WordNetLemmatizer()
 
