@@ -1,4 +1,4 @@
-# DACT Qualitative Analyis Toolkit (dact-qat)
+# DACT Qualitative Analyis Toolkit (dact-qualkit)
 
 This project is a collection of utilities for conducting qualitative
 analysis.
