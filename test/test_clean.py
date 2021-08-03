@@ -16,7 +16,7 @@ def test_replace_domain_terms():
 
 
 def test_lemmatize():
-    text = {"text":['more seminars running helping cooks find']}
+    text = {"text": ['more seminars running helping cooks find']}
     df = pd.DataFrame(text, columns=['text'])
     df = lemmatize(df, 'text')
     output = df['text'][0]
