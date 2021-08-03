@@ -21,6 +21,6 @@ stopwords.extend(
      "these", "they", "this", "those", "through", "to", "too", "under", "up", "use", "using", "used", "underway",
      "very", "want", "was", "way", "we", "well", "were", "what", "when", "where", "which", "while", "whilst", "who",
      "will", "with", "would", "you", "your", "i", "i m", "im",
-     'ha', 'le', 'u', 'wa'
+     'ha', 'le', 'u', 'wa',
      'etc', 'via', 'eg', 'e g', 'ie'])
 
