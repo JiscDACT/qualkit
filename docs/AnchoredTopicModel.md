@@ -120,5 +120,18 @@ Add the following code after the code for creating an anchored model:
     unmatched = df[(df['Topic label'] == 'No matching topic')].copy()
     df = anchored_topic_model(unmatched, 'cleaned', number_of_topics=12, print_topic_details=True)
 
-## Installing and running the code
-I recommend using PyCharm for working with this library.
+## API reference
+
+### anchored_topic_model(_data, column, topic_names=None, anchors=None, number_of_topics=10, print_topic_details=False_)
+
+**data**: a pandas dataframe containing the data.
+
+**column** a string with the column name to use as the source text.
+
+**topic_names** _(optional)_ a list of names to use for topics.
+
+**anchors** _(optional)_ a list of list of anchor terms to use to steer the topic model.
+
+**number_of_topics** _default=10_ the number of topics to generate.
+
+**print_topic_details** _default=False_ prints to the console the topics generated and their top 10 terms
