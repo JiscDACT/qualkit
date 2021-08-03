@@ -56,6 +56,8 @@ def anchored_topic_model(data, column, topic_names=None, anchors=None, number_of
 
     # Enumerate the topics from the model and create labels
     topic_labels = ['No matching topic']
+    if print_topic_details:
+        print("Total correlation: " + str(model.tc))
     for i, topic_ngrams in enumerate(model.get_topics(n_words=10)):
         topic_ngrams = [ngram[0] for ngram in topic_ngrams if ngram[1] > 0]
         topic_label = ", ".join(topic_ngrams)
