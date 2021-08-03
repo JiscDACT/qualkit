@@ -94,17 +94,17 @@ that includes the topics as well as the original data you supplied:
         'Nothing/OK',
         'Organisation']
     anchors = [
-        ["resources", "library", "books", 'access'],
-        ["pre recorded", "recorded", 'record', "pre recorded lectures", "video", "videos","content",'materials','powerpoint','material','accessible', 'subtitles'],
-        ["live lectures", "face", "physical", 'on campus', 'in person','live lessons','live','less online','not online'],
+        ["resource", "library", "book", 'access'],
+        ["pre recorded", "recorded", 'record', "pre recorded lectures", "video", "content", 'powerpoint', 'material', 'accessible', 'subtitle'],
+        ["live lecture", "face", "physical", 'on campus', 'in person', 'live lesson', 'live', 'less online', 'not online'],
         ["help", "support", 'motivate', "supportive", "mental health", 'safe', 'assistance', 'awareness', 'outreach'],
         ['guidance', 'information', 'training', 'more guidance', 'more information'],
-        ["time", 'pressure', "workload", "overload", "deadlines", "work", "deadline", 'spread out', 'space out', 'pace', 'pacing', 'shorter', 'breaks'],
-        ["vle", "platform", 'software', 'interface', 'platforms', 'onlinemeetingtool', 'technology', 'system'],
-        ['wifi', "connection", "internet", "data", 'laptops', 'laptop', 'computers', "equipment", 'specialist software', 'specialised software'],
-        ['reply', 'response', 'explain', 'respond', 'contact', 'listen', 'email', "emails", "communication", "communicate", "personal tutor", "better communication", 'clear', 'clearer', 'clarity', "feedback", 'ask questions'],
-        ['participation', 'involvement', 'interactive', 'interactivity', 'engage', 'engagement', 'engaging', 'interesting', 'interaction', 'discussion', 'quizzes', 'quiz', 'activity', 'activities'],
-        ['personal', 'individual', 'seminars', 'tutorials', 'tutorial', 'group', 'groupwork', 'small groups', 'workshops', 'smaller', 'onetoone', 'onetoones'],
+        ["time", 'pressure', "workload", "overload", "work", "deadline", 'spread out', 'space out', 'pace', 'pacing', 'shorter', 'break'],
+        ["vle", "platform", 'software', 'interface', 'onlinemeetingtool', 'technology', 'system'],
+        ['wifi', "connection", "internet", "data", 'laptop', 'computer', "equipment", 'specialist software', 'specialised software'],
+        ['reply', 'response', 'explain', 'respond', 'contact', 'listen', 'email', "communication", "communicate", "personal tutor", "better communication", 'clear', 'clearer', 'clarity', "feedback", 'ask questions'],
+        ['participation', 'involvement', 'interactive', 'interactivity', 'engage', 'engagement', 'engaging', 'interesting', 'interaction', 'discussion', 'quiz', 'activity'],
+        ['personal', 'individual', 'seminar', 'tutorial', 'group', 'groupwork', 'small group', 'workshop', 'smaller', 'onetoone'],
         ['happy', 'nothing', 'keep same', 'keep doing', 'good', 'same', 'continue', 'great', 'fine'],
         ['staff', 'organised', 'organized', 'organisation', 'structure', 'structured', 'planned', 'timetable', 'detailed', 'manage', 'schedule', 'consistent', 'management']
     ]
