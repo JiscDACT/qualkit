@@ -18,8 +18,8 @@ def anchored_topic_model(data, column, topic_names=None, anchors=None, number_of
             topic_names = ['No matching topic']+topic_names
 
     vectorizer = TfidfVectorizer(
-        max_df=0.5,
-        min_df=10,
+        max_df=0.25,
+        min_df=5,
         max_features=None,
         ngram_range=(1, 3),
         norm=None,
@@ -50,8 +50,8 @@ def anchored_topic_model(data, column, topic_names=None, anchors=None, number_of
         model = model.fit(
             tfidf,
             words=vocab,
-            anchors=anchors,  # Pass the anchors in here
-            anchor_strength=2  # Tell the model how much it should rely on the anchors
+            anchors=anchors,
+            anchor_strength=2  # Tells the model how much it should rely on the anchors
         )
 
     # Enumerate the topics from the model and create labels
@@ -83,8 +83,12 @@ def anchored_topic_model(data, column, topic_names=None, anchors=None, number_of
     df_document_topic['Topic label'] = df_document_topic['Dominant_topic'].apply(lambda x: topic_labels[x])
     df_document_topic['Topic name'] = df_document_topic['Dominant_topic'].apply(lambda x: topic_names[x])
 
+    # remove the individual columns for topics
+    df_document_topic.drop(columns=topic_cols, inplace=True, axis=1)
+    topic_matrix.drop(columns=topic_cols, inplace=True, axis=1)
+
     # join to original dataframes
-    topic_matrix = pd.merge(topic_matrix, df_document_topic[['Dominant_topic', 'Topic label', 'Topic name']],
+    topic_matrix = pd.merge(topic_matrix, df_document_topic[['Topic label', 'Topic name']],
                             left_index=True, right_index=True, how='outer')
     results = pd.merge(df, topic_matrix, left_index=True, right_index=True, how='outer')
 

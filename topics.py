@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 import nltk
-from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk import ngrams
 from rake_nltk import Rake
@@ -11,6 +10,9 @@ import collections
 from stopwords import stopwords
 
 nltk.download('wordnet')
+
+# The code for combining LDA and RAKE is based upon Lowri Williams' method described here:
+# https://github.com/LowriWilliams/Topic_Modelling_Beyond_Tokens/
 
 # initiate stopwords
 stop_words = stopwords
@@ -257,7 +259,6 @@ def lda_with_keywords(data):
     # Add keywords to topics
     all_results = add_keywords_to_topics(df)
 
-    #all_results.append({'score': 1000, 'topic_number' : 0.0, 'term' : '', 'parent' : ''})
     all_topics_df = pd.DataFrame(all_results)
     all_topics_df = all_topics_df.sort_values('topic_number', ascending=True)
 
