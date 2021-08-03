@@ -1,4 +1,23 @@
 import numpy as np
+from nltk.stem import WordNetLemmatizer
+from nltk import word_tokenize
+
+wordnet_lemmatizer = WordNetLemmatizer()
+
+
+# Lemmatize a single string by tokenising and then reassembling it
+def lemmatize_string(text):
+    tokens = word_tokenize(text)
+    output = []
+    for token in tokens:
+        output.append(wordnet_lemmatizer.lemmatize(token))
+    return ' '.join(output)
+
+
+def lemmatize(data, column):
+    df = data.copy()
+    df[column] = df[column].apply(lambda x: lemmatize_string(x))
+    return df
 
 
 def remove_dont_knows(data, column):
@@ -29,7 +48,7 @@ def replace_dont_knows(text, replacement):
 def replace_all_domain_terms(text):
     onetoone = ['1 2 1', '1 on 1', '1 to 1', '1-1', '1on1', '1:1', '1to1']
     vle = ['blackboard', 'moodle', 'canvas']
-    online_meeting_tool = ['zoom', 'blackboard collaborate', 'teams', 'microsoft teams', 'big blue button']
+    online_meeting_tool = ['zoom', 'blackboard collaborate', 'microsoft teams', 'big blue button', 'teams']
 
     text = replace_domain_terms(text, onetoone, 'onetoone')
     text = replace_domain_terms(text, vle, 'vle')

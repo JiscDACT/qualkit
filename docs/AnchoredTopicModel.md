@@ -66,6 +66,7 @@ text to the console as a list of terms:
 
     data = pd.read_csv('data/dei_student_all.csv')
     data = clean(data, 'Q26')
+    data = lemmatize(data, 'cleaned')
     data = remove_dont_knows(data, 'cleaned')
     df = anchored_topic_model(data, 'cleaned', number_of_topics=12, print_topic_details=True)
 

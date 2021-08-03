@@ -1,5 +1,5 @@
 import pandas as pd
-from qualkit.clean import clean, remove_dont_knows
+from qualkit.clean import clean, remove_dont_knows, lemmatize
 from qualkit.anchored_topic_model import anchored_topic_model
 
 #  Using an anchored topic model
@@ -16,6 +16,7 @@ data['Unique Response Number'] = data['Unique Response Number'].astype(str)
 # always clean data first! The output is called "cleaned" in the result rather than overwrite the original data
 data = clean(data, 'Q26')
 data = remove_dont_knows(data, 'cleaned')
+data = lemmatize(data, 'cleaned')
 
 print("\nNon-anchored\n")
 df1 = anchored_topic_model(data, 'cleaned', number_of_topics=12, print_topic_details=True)
@@ -35,17 +36,17 @@ topic_names = [
     'Nothing/OK',
     'Organisation']
 anchors = [
-    ["resources", "library", "books", 'access'],
-    ["pre recorded", "recorded", 'record', "pre recorded lectures", "video", "videos","content",'materials','powerpoint','material','accessible', 'subtitles'],
-    ["live lectures", "face", "physical", 'on campus', 'in person','live lessons','live','less online','not online'],
+    ["resource", "library", "book", 'access'],
+    ["pre recorded", "recorded", 'record', "pre recorded lectures", "video", "content", 'powerpoint', 'material', 'accessible', 'subtitle'],
+    ["live lecture", "face", "physical", 'on campus', 'in person', 'live lesson', 'live', 'less online', 'not online'],
     ["help", "support", 'motivate', "supportive", "mental health", 'safe', 'assistance', 'awareness', 'outreach'],
     ['guidance', 'information', 'training', 'more guidance', 'more information'],
-    ["time", 'pressure', "workload", "overload", "deadlines", "work", "deadline", 'spread out', 'space out', 'pace', 'pacing', 'shorter', 'breaks'],
-    ["vle", "platform", 'software', 'interface', 'platforms', 'onlinemeetingtool', 'technology', 'system'],
-    ['wifi', "connection", "internet", "data", 'laptops', 'laptop', 'computers', "equipment", 'specialist software', 'specialised software'],
-    ['reply', 'response', 'explain', 'respond', 'contact', 'listen', 'email', "emails", "communication", "communicate", "personal tutor", "better communication", 'clear', 'clearer', 'clarity', "feedback", 'ask questions'],
-    ['participation', 'involvement', 'interactive', 'interactivity', 'engage', 'engagement', 'engaging', 'interesting', 'interaction', 'discussion', 'quizzes', 'quiz', 'activity', 'activities'],
-    ['personal', 'individual', 'seminars', 'tutorials', 'tutorial', 'group', 'groupwork', 'small groups', 'workshops', 'smaller', 'onetoone', 'onetoones'],
+    ["time", 'pressure', "workload", "overload", "work", "deadline", 'spread out', 'space out', 'pace', 'pacing', 'shorter', 'break'],
+    ["vle", "platform", 'software', 'interface', 'onlinemeetingtool', 'technology', 'system'],
+    ['wifi', "connection", "internet", "data", 'laptop', 'computer', "equipment", 'specialist software', 'specialised software'],
+    ['reply', 'response', 'explain', 'respond', 'contact', 'listen', 'email', "communication", "communicate", "personal tutor", "better communication", 'clear', 'clearer', 'clarity', "feedback", 'ask questions'],
+    ['participation', 'involvement', 'interactive', 'interactivity', 'engage', 'engagement', 'engaging', 'interesting', 'interaction', 'discussion', 'quiz', 'activity'],
+    ['personal', 'individual', 'seminar', 'tutorial', 'group', 'groupwork', 'small group', 'workshop', 'smaller', 'onetoone'],
     ['happy', 'nothing', 'keep same', 'keep doing', 'good', 'same', 'continue', 'great', 'fine'],
     ['staff', 'organised', 'organized', 'organisation', 'structure', 'structured', 'planned', 'timetable', 'detailed', 'manage', 'schedule', 'consistent', 'management']
 ]
