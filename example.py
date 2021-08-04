@@ -18,9 +18,15 @@ data = clean(data, 'Q26')
 data = remove_dont_knows(data, 'cleaned')
 data = lemmatize(data, 'cleaned')
 
+#
+# Create a topic model with no anchor topics as a baseline
+#
 print("\nNon-anchored\n")
-df1 = anchored_topic_model(data, 'cleaned', number_of_topics=16, print_topic_details=True)
+df1 = anchored_topic_model(data, 'cleaned', number_of_topics=19, print_topic_details=True)
 
+#
+# Create an anchored topic model with suggested topics anchor terms
+#
 topic_names = [
     'Library resources',
     'Course materials',
@@ -40,14 +46,15 @@ topic_names = [
     'Online learning',
     'Accessibility',
     'Don\'t knows',
-    'More sessions'
+    'Session length',
+    'Digital skills'
 ]
 anchors = [
     ["resource", "library", "book", 'access', 'textbook', 'ebooks'],
     ["pre recorded", "prerecord", "recorded", 'record', "prerecorded", "video", "content", 'powerpoint', 'material', 'powerpoints'],
     ["live", "face", "physical", 'on campus', 'in person'],
     ["help", "support", 'advice', 'motivate', "supportive", "mental health", 'safe', 'safety', 'assistance', 'awareness', 'outreach', 'check in'],
-    ['guidance', 'info', 'information', 'training', 'show how', 'how to', 'more guidance', 'more information', 'instruction', 'clear', 'clearer', 'explain',  'clarity', 'tip'],
+    ['guidance', 'info', 'information', 'show how', 'how to', 'more guidance', 'more information', 'instruction', 'clear', 'clearer', 'explain',  'clarity'],
     ["time", 'pressure', "workload", "overload", "work", "deadline", 'spread', 'spaced', 'space', 'pace', 'pacing', 'paced', 'break', 'slower', 'slow', 'shorter', 'short', 'extension'],
     ["vle", "platform", 'software', 'interface', 'onlinemeetingtool', 'technology', 'system', 'tech', 'navigation'],
     ['wifi', 'broadband', "connection", "internet", "data", 'laptop', 'computer', "equipment", 'specialist software', 'specialised software', 'camera', 'mic', 'device'],
@@ -58,10 +65,11 @@ anchors = [
     ['more organised', 'staff', 'organised', 'organized', 'organisation', 'structure', 'structured', 'planned', 'detailed', 'manage', 'consistent', 'consistency', 'management', 'plan', 'timetable', 'timetabled', 'earlier', 'later', 'on time',  'schedule'],
     ['assessment', 'assignment', 'exam', 'revision', 'results', 'practice', 'test', 'revise','track','progress'],
     ['teaching', 'effectively', 'teacher', 'engaged', 'involved', 'involvement', 'engage', 'engagement', 'engaging', 'interesting', 'less boring'],
-    ['dont online learning', 'not online learning', 'more online learning', 'less online learning', 'stop online learning', 'not online', 'no online', 'stop online learning', 'go back', 'stop doing'],
+    ['online learning', 'dont online learning', 'not online learning', 'more online learning', 'less online learning', 'stop online learning', 'not online', 'no online', 'stop online learning', 'go back', 'stop doing', 'rid online learning'],
     ['accessible', 'accessibility', 'subtitle', 'caption', 'blind', 'deaf', 'dyslexia', 'dyslexic', 'captioning'],
     ['dont know', 'not sure', 'no idea'],
-    ['more lecture', 'more session', 'longer', 'increase lesson', 'more lesson']
+    ['long', 'screen time', 'early', 'late'],
+    ['tip', 'skill', 'basic', 'digital', 'basic skill', 'digital skill', 'training session', 'train', 'training online', 'knowledge']
 ]
 print("\nAnchored\n")
 df2 = anchored_topic_model(data, 'cleaned', topic_names=topic_names, anchors=anchors, print_topic_details=True)
@@ -71,6 +79,9 @@ df2.loc[df2['cleaned'] == 'nothing', 'Topic label'] = terms
 df2.loc[df2['cleaned'] == 'nothing', 'Topic name'] = 'Nothing/OK'
 df2.to_csv('output/corex.csv')
 
+#
+# Create a topic model for all the terms that weren't matched to see if there are any patterns
+#
 print("\nUnmatched\n")
 unmatched = df2[(df2['Topic label'] == 'No matching topic')].copy()
 df2 = anchored_topic_model(unmatched, 'cleaned', number_of_topics=18, print_topic_details=True)

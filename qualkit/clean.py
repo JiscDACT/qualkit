@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from nltk.stem import WordNetLemmatizer
 from nltk import word_tokenize
 import nltk
@@ -24,7 +25,7 @@ def lemmatize(data, column):
     return df
 
 
-def remove_dont_knows(data, column):
+def remove_dont_knows(data, column) -> pd.DataFrame:
     df = data.copy()
     df['dontknow'] = df[column].apply(lambda x: replace_dont_knows(x, ''))
     df['dontknow'].replace('', np.nan, inplace=True)
@@ -34,7 +35,7 @@ def remove_dont_knows(data, column):
 
 
 def replace_dont_knows(text, replacement):
-    terms = ['i honestly dont know', "im dont know", "i m dont know", "i dont really know", "i dont know really", "i dont know sorry", "sorry i dont know", "i dont know mate", "i dont know", "i don t know", "i do not know", "dont really know", "dont know", "i dunno", "dunno", "don t know","idk", "do not know"]
+    terms = ['i honestly dont know', "im dont know", "i m dont know", "i really dont know", "i dont really know", "i dont know really", "i dont know sorry", "sorry i dont know", "i dont know mate", "i dont know", "i don t know", "i do not know", "dont really know", "dont know", "i dunno", "dunno", "don t know","idk", "do not know"]
     for word in terms:
         text = text.replace(word, replacement)
 
@@ -79,25 +80,30 @@ def replace_domain_terms(text, domain_terms, replacement):
     return text
 
 
-def clean(data, column=0) -> object:
+def clean(data, column=0, inplace=False) -> pd.DataFrame:
     df = data.copy()
 
+    if inplace:
+        output = column
+    else:
+        output = 'cleaned'
+
     # remove apostrophes
-    df['cleaned'] = df[column].str.replace("'", '').str.replace("`",'').str.replace("’",'').str.replace("’",'')
-    df['cleaned'].replace('', np.nan, inplace=True)
-    df.dropna(subset=['cleaned'], inplace=True)
+    df[output] = df[column].str.replace("'", '').str.replace("`",'').str.replace("’",'').str.replace("’",'')
+    df[output].replace('', np.nan, inplace=True)
+    df.dropna(subset=[output], inplace=True)
 
     # lowercase
-    df['cleaned'] = df['cleaned'].str.lower()
+    df[output] = df[output].str.lower()
 
     # Domain terms
-    df['cleaned'] = df['cleaned'].apply(lambda x: replace_all_domain_terms(x))
+    df[output] = df[output].apply(lambda x: replace_all_domain_terms(x))
 
     # remove punctuation, remove extra whitespace in string and on both sides of string
-    df['cleaned'] = df['cleaned'].str.replace('[^a-z]', ' ').str.replace(' +', ' ').str.strip()
+    df[output] = df[output].str.replace('[^a-z]', ' ').str.replace(' +', ' ').str.strip()
 
     # if the result is an empty string, or null, remove the row
-    df['cleaned'].replace('', np.nan, inplace=True)
-    df.dropna(subset=['cleaned'], inplace=True)
+    df[output].replace('', np.nan, inplace=True)
+    df.dropna(subset=[output], inplace=True)
 
     return df
