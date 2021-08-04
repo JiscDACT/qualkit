@@ -1,11 +1,11 @@
 from setuptools import setup
 
-VERSION = '0.0.8'
+VERSION = '0.0.9'
 
 setup(
     name='qualkit',
     version=VERSION,
-    py_modules=['qualkit'],
+    packages=['qualkit'],
     url='https://github.com/JiscDACT/qualkit',
     download_url='https://github.com/JiscDACT/qualkit/tarball/{}'.format(VERSION),
     license='BSD',
