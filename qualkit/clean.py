@@ -34,7 +34,7 @@ def remove_dont_knows(data, column):
 
 
 def replace_dont_knows(text, replacement):
-    terms = ['i honestly dont know', "im dont know", "i m dont know", "i dont know", "i don t know", "i do not know", "dont know", "i dunno", "dunno", "don t know","idk", "do not know"]
+    terms = ['i honestly dont know', "im dont know", "i m dont know", "i dont really know", "i dont know really", "i dont know sorry", "sorry i dont know", "i dont know mate", "i dont know", "i don t know", "i do not know", "dont really know", "dont know", "i dunno", "dunno", "don t know","idk", "do not know"]
     for word in terms:
         text = text.replace(word, replacement)
 
@@ -43,6 +43,10 @@ def replace_dont_knows(text, replacement):
         text = text.replace(word, replacement)
 
     terms = ["no comments", "no comment","no opinion", "n a", "na", "none", "unknown", "no answer" ,'not applicable', 'nil', 'no']
+    for word in terms:
+        text = text.replace(word, replacement)
+
+    terms = ['i cant think of anything', 'cant think of anything']
     for word in terms:
         text = text.replace(word, replacement)
 
