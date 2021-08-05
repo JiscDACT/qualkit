@@ -5,10 +5,42 @@ from corextopic import corextopic as ct
 from qualkit.stopwords import stopwords
 
 
-def anchored_topic_model(data, column, topic_names=None, anchors=None, number_of_topics=10, print_topic_details=False):
+def load_topics(file):
+    """
+    Loads topic names and anchors from a file
+    :param file: the path/filename of the file to use
+    :return: a DataFrame with 'topic_name' and 'anchors' columns
+    """
+    df = pd.read_csv(file, header=None)
+    df['anchors'] = df.drop(0, axis=1).values.tolist()
+    df['anchors'] = df['anchors'].apply(lambda x: [i for i in x if i == i])
+    df['topic_name'] = df[0]
+    output = df[['topic_name', 'anchors']].copy()
+    return output
+
+
+def anchored_topic_model(data, column, topic_filename=None, topic_names=None, anchors=None, number_of_topics=10, print_topic_details=False):
+    """
+    Creates a topic model using the Corex algorithm using an optional set of user-provided anchors
+    :param data: a DataFrame containing a column with text to analyse
+    :param column: the name of the column containing the text
+    :param topic_filename: (optional) the name of a file containing anchor terms and topic names
+    :param topic_names: (optional) a List of topic names
+    :param anchors: (optional) a list containing lists of anchor terms
+    :param number_of_topics: defaults to 10; the number of topics to generate (overridden if topics are supplied)
+    :param print_topic_details: if true, print to console a summary of the generated topics
+    :return:a DataFrame containing the original data supplied along with the 'topic label' and 'topic name' for each row
+    """
+
+    # Load topics from file if provided
+    if topic_filename is not None:
+        tf = load_topics(topic_filename)
+        topic_names = tf['topic_name']
+        anchors = tf['anchors']
 
     df = data.copy()
 
+    # Calculate number of topics based on provided anchors if supplied
     if anchors is not None:
         number_of_topics = len(anchors)
         if topic_names is not None:
@@ -17,6 +49,8 @@ def anchored_topic_model(data, column, topic_names=None, anchors=None, number_of
                 return None
             topic_names = ['No matching topic']+topic_names
 
+    # Initialise the vectorizer that will split the text into tokens
+    # uses the TFIDF algorithm
     vectorizer = TfidfVectorizer(
         max_df=0.25,
         min_df=5,
@@ -75,11 +109,12 @@ def anchored_topic_model(data, column, topic_names=None, anchors=None, number_of
         index=df.index,
     )
 
+    # Add columns for each topic
     topic_cols = ["topic_" + str(i) for i in range(1, number_of_topics + 1)]
     df_document_topic = pd.DataFrame(topic_matrix, columns=topic_cols)
     df_document_topic.insert(0, 'no topic', False, True)
 
-    # get the dominant topic for each document
+    # get the dominant topic for each document, or 'no topic' if unmatched
     dominant_topic = (np.argmax(df_document_topic.values, axis=1))
     df_document_topic['Dominant_topic'] = dominant_topic
     df_document_topic['Topic label'] = df_document_topic['Dominant_topic'].apply(lambda x: topic_labels[x])
@@ -89,7 +124,7 @@ def anchored_topic_model(data, column, topic_names=None, anchors=None, number_of
     df_document_topic.drop(columns=topic_cols, inplace=True, axis=1)
     topic_matrix.drop(columns=topic_cols, inplace=True, axis=1)
 
-    # join to original dataframes
+    # join the results back to the original dataframe and return
     topic_matrix = pd.merge(topic_matrix, df_document_topic[['Topic label', 'Topic name']],
                             left_index=True, right_index=True, how='outer')
     results = pd.merge(df, topic_matrix, left_index=True, right_index=True, how='outer')
