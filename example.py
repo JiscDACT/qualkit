@@ -50,7 +50,7 @@ topic_names = [
     'Digital skills'
 ]
 anchors = [
-    ["resource", "library", "book", 'access', 'textbook', 'ebooks'],
+    ["resource", "library", "book", 'access', 'textbook', 'ebooks', 'reading list'],
     ["pre recorded", "prerecord", "recorded", 'record', "prerecorded", "video", "content", 'powerpoint', 'material', 'powerpoints'],
     ["live", "face", "physical", 'on campus', 'in person'],
     ["help", "support", 'advice', 'motivate', "supportive", "mental health", 'safe', 'safety', 'assistance', 'awareness', 'outreach', 'check in'],
