@@ -19,12 +19,12 @@ def test_lemmatize():
     df = pd.DataFrame(text, columns=['text'])
     df = qualkit.clean.lemmatize(df, 'text')
     output = df['text'][0]
-    assert output == 'more seminar running helping cook find'
+    assert output == 'more seminar run help cook find'
 
 
 def test_lemmatize_string():
     output = qualkit.clean.lemmatize_string('more seminars running helping cooks find')
-    assert output == 'more seminar running helping cook find'
+    assert output == 'more seminar run help cook find'
 
 
 def test_remove_dont_knows():
