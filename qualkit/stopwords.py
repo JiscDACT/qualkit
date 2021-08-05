@@ -1,6 +1,7 @@
 import nltk
 
 nltk.download('wordnet')
+nltk.download('stopwords')
 
 # initiate stopwords from nltk
 stopwords = nltk.corpus.stopwords.words('english')
