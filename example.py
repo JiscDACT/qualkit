@@ -1,4 +1,5 @@
 import pandas as pd
+
 from qualkit.clean import clean, remove_dont_knows, lemmatize
 from qualkit.anchored_topic_model import anchored_topic_model
 
@@ -46,31 +47,31 @@ topic_names = [
     'Online learning',
     'Accessibility',
     'Don\'t knows',
-    'Session length',
     'Digital skills'
 ]
 anchors = [
-    ["resource", "library", "book", 'access', 'textbook', 'ebooks', 'reading list'],
-    ["pre recorded", "prerecord", "recorded", 'record', "prerecorded", "video", "content", 'powerpoint', 'material', 'powerpoints'],
-    ["live", "face", "physical", 'on campus', 'in person'],
-    ["help", "support", 'advice', 'motivate', "supportive", "mental health", 'safe', 'safety', 'assistance', 'awareness', 'outreach', 'check in'],
-    ['guidance', 'info', 'information', 'show how', 'how to', 'more guidance', 'more information', 'instruction', 'clear', 'clearer', 'explain',  'clarity'],
+    ["resource", "library", "book", 'access', 'textbook', 'ebooks', 'reading', 'list'],
+    ["pre", "prerecord", "recorded", 'recording', 'record', "prerecorded", "video", "content", 'powerpoint', 'material', 'powerpoints'],
+    ["live", "face", "physical", 'campus', 'person'],
+    ["help", "support", 'advice', 'motivate', "supportive", "mental", "health", 'safe', 'safety', 'assistance', 'awareness', 'outreach', 'check in'],
+    ['guidance', 'guide', 'info', 'information', 'show', 'how', 'instruction', 'clear', 'clearer', 'explain',  'clarity'],
     ["time", 'pressure', "workload", "overload", "work", "deadline", 'spread', 'spaced', 'space', 'pace', 'pacing', 'paced', 'break', 'slower', 'slow', 'shorter', 'short', 'extension'],
     ["vle", "platform", 'software', 'interface', 'onlinemeetingtool', 'technology', 'system', 'tech', 'navigation'],
-    ['wifi', 'broadband', "connection", "internet", "data", 'laptop', 'computer', "equipment", 'specialist software', 'specialised software', 'camera', 'mic', 'device'],
-    ['talk', 'reply', 'interact', 'response', 'respond', 'contact', 'listen', 'email', "communication", "communicate", "communicating", "personal tutor", "better communication", "feedback", 'ask questions'],
+    ['wifi', 'network', 'broadband', "connection", "internet", "data", 'laptop', 'computer', "equipment", 'specialist', 'specialised', 'software', 'camera', 'mic', 'device'],
+    ['talk', 'reply', 'interact', 'response', 'respond', 'contact', 'listen', 'email', "communication", "communicate", "communicating", "feedback", 'questions'],
     ['participation', 'interactive', 'interactivity', 'interaction', 'discussion', 'quiz', 'activity', 'variety', 'kahoot', 'kahoots'],
-    ['personal', 'individual', 'seminar', 'tutorial', 'group', 'groupwork', 'small group', 'workshop', 'smaller', 'onetoone', 'onetoones', 'one one', 'collaboration'],
-    ['nothing', 'nothing improve', 'happy', 'keep', 'good', 'same', 'continue', 'great', 'fine', 'satisfied', 'all good'],
-    ['more organised', 'staff', 'organised', 'organized', 'organisation', 'structure', 'structured', 'planned', 'detailed', 'manage', 'consistent', 'consistency', 'management', 'plan', 'timetable', 'timetabled', 'earlier', 'later', 'on time',  'schedule'],
+    ['personal', 'individual', 'seminar', 'tutorial', 'group', 'groupwork', 'small', 'workshop', 'smaller', 'onetoone', 'onetoones', 'collaboration'],
+    ['nothing', 'happy', 'keep', 'good', 'same', 'continue', 'great', 'fine', 'satisfied', 'perfect'],
+    ['more organised', 'organised', 'arrange', 'staff', 'organized', 'organisation', 'structure', 'structured', 'planned', 'detailed', 'manage', 'consistent', 'consistency', 'management', 'plan', 'timetable', 'timetabled', 'earlier', 'later', 'time',  'schedule'],
     ['assessment', 'assignment', 'exam', 'revision', 'results', 'practice', 'test', 'revise','track','progress'],
-    ['teaching', 'effectively', 'teacher', 'engaged', 'involved', 'involvement', 'engage', 'engagement', 'engaging', 'interesting', 'less boring'],
-    ['online learning', 'dont online learning', 'not online learning', 'more online learning', 'less online learning', 'stop online learning', 'not online', 'no online', 'stop online learning', 'go back', 'stop doing', 'rid online learning'],
+    ['teaching', 'effectively', 'teacher', 'engaged', 'involved', 'involvement', 'engage', 'engagement', 'engaging', 'interesting', 'boring'],
+    ['online', 'learning', 'dont', 'not', 'less', 'stop', 'back', 'rid'],
     ['accessible', 'accessibility', 'subtitle', 'caption', 'blind', 'deaf', 'dyslexia', 'dyslexic', 'captioning'],
-    ['dont know', 'not sure', 'no idea'],
-    ['long', 'screen time', 'early', 'late'],
-    ['tip', 'skill', 'basic', 'digital', 'basic skill', 'digital skill', 'training session', 'train', 'training online', 'knowledge']
+    ['dont', 'know', 'not', 'sure', 'idea'],
+    ['tip', 'skill', 'basic', 'digital', 'training', 'train', 'online', 'knowledge']
 ]
+
+#    ['long', 'screen', 'time', 'early', 'late']
 print("\nAnchored\n")
 df2 = anchored_topic_model(data, 'cleaned', topic_names=topic_names, anchors=anchors, print_topic_details=True)
 # manual fix for a model problem - the single word 'nothing' doesn't get allocated to a topic
