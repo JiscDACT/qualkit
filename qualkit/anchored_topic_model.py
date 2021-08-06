@@ -19,7 +19,8 @@ def load_topics(file):
     return output
 
 
-def anchored_topic_model(data, column, topic_filename=None, topic_names=None, anchors=None, number_of_topics=10, print_topic_details=False):
+def anchored_topic_model(data, column, topic_filename=None, topic_names=None, anchors=None, number_of_topics=10,
+                         print_topic_details=False):
     """
     Creates a topic model using the Corex algorithm using an optional set of user-provided anchors
     :param data: a DataFrame containing a column with text to analyse
@@ -62,6 +63,10 @@ def anchored_topic_model(data, column, topic_filename=None, topic_names=None, an
         sublinear_tf=False,
         stop_words=stopwords
     )
+
+    # Get rid of any NaNs before we run the vectorizer
+    df.dropna(subset=[column], inplace=True)
+
     vectorizer = vectorizer.fit(df[column])
     tfidf = vectorizer.transform(df[column])
     vocab = vectorizer.get_feature_names()
@@ -130,5 +135,3 @@ def anchored_topic_model(data, column, topic_filename=None, topic_names=None, an
     results = pd.merge(df, topic_matrix, left_index=True, right_index=True, how='outer')
 
     return results
-
-
