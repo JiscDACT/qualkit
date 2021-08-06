@@ -1,7 +1,7 @@
 import pandas as pd
 
 from qualkit.clean import clean, remove_dont_knows, lemmatize
-from qualkit.anchored_topic_model import anchored_topic_model
+from qualkit.anchored_topic_model import anchored_topic_model, topic_metrics
 
 #  Using an anchored topic model
 #  =============================
@@ -18,6 +18,8 @@ data['Unique Response Number'] = data['Unique Response Number'].astype(str)
 data = clean(data, 'Q26')
 data = remove_dont_knows(data, 'cleaned')
 data = lemmatize(data, 'cleaned')
+
+topic_metrics(data,'cleaned',number_of_topics=30)
 
 #
 # Create a topic model with no anchor topics as a baseline

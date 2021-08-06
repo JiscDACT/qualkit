@@ -19,6 +19,74 @@ def load_topics(file):
     return output
 
 
+def __initialise_vectoriser__():
+    # Initialise the vectorizer that will split the text into tokens
+    # uses the TFIDF algorithm
+    return TfidfVectorizer(
+        max_df=0.25,
+        min_df=5,
+        max_features=None,
+        ngram_range=(1, 3),
+        norm=None,
+        binary=True,
+        use_idf=False,
+        sublinear_tf=False,
+        stop_words=stopwords
+    )
+
+
+def __model__(tfidf, vocab, anchors, number_of_topics):
+
+    # Filter by vocab
+    if anchors is not None:
+        anchors = [
+            [a for a in topic if a in vocab]
+            for topic in anchors
+        ]
+
+    # Create the Corex model
+    model = ct.Corex(n_hidden=number_of_topics, seed=42)
+    if anchors is None:
+        model = model.fit(
+            tfidf,
+            words=vocab
+        )
+    else:
+        model = model.fit(
+            tfidf,
+            words=vocab,
+            anchors=anchors,
+            anchor_strength=2  # Tells the model how much it should rely on the anchors
+        )
+
+    return model
+
+
+def topic_metrics(data, column, number_of_topics=25):
+    """
+    Runs the model for 2-number of topics times and generates
+    the total correlation (tc) to help determine how many
+    topics to generate
+    :param data: the dataframe
+    :param column: the column
+    :param number_of_topics: the maximum number of topics to try
+    :return: an array of tuples of topic number and total correlation
+    """
+    df = data.copy()
+    vectorizer = __initialise_vectoriser__()
+    vectorizer = vectorizer.fit(df[column])
+    tfidf = vectorizer.transform(df[column])
+    vocab = vectorizer.get_feature_names()
+
+    # Create the model
+    results = []
+    for i in range(1, number_of_topics):
+        model = __model__(tfidf, vocab, None, i)
+        results.append({"topics": i, "tc": model.tc})
+        print("Total correlation with " + str(i) + " topics = " + str(model.tc))
+    return results
+
+
 def anchored_topic_model(data, column, topic_filename=None, topic_names=None, anchors=None, number_of_topics=10,
                          print_topic_details=False):
     """
@@ -52,46 +120,13 @@ def anchored_topic_model(data, column, topic_filename=None, topic_names=None, an
 
     # Initialise the vectorizer that will split the text into tokens
     # uses the TFIDF algorithm
-    vectorizer = TfidfVectorizer(
-        max_df=0.25,
-        min_df=5,
-        max_features=None,
-        ngram_range=(1, 3),
-        norm=None,
-        binary=True,
-        use_idf=False,
-        sublinear_tf=False,
-        stop_words=stopwords
-    )
-
-    # Get rid of any NaNs before we run the vectorizer
-    df.dropna(subset=[column], inplace=True)
-
+    vectorizer = __initialise_vectoriser__()
     vectorizer = vectorizer.fit(df[column])
     tfidf = vectorizer.transform(df[column])
     vocab = vectorizer.get_feature_names()
 
-    # Filter by vocab
-    if anchors is not None:
-        anchors = [
-            [a for a in topic if a in vocab]
-            for topic in anchors
-        ]
-
-    # Create the Corex model
-    model = ct.Corex(n_hidden=number_of_topics, seed=42)
-    if anchors is None:
-        model = model.fit(
-            tfidf,
-            words=vocab
-        )
-    else:
-        model = model.fit(
-            tfidf,
-            words=vocab,
-            anchors=anchors,
-            anchor_strength=2  # Tells the model how much it should rely on the anchors
-        )
+    # Create the model
+    model = __model__(tfidf, vocab, anchors, number_of_topics)
 
     # Enumerate the topics from the model and create labels
     topic_labels = ['No matching topic']
