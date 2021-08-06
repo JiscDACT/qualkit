@@ -14,7 +14,7 @@ wordnet_lemmatizer = WordNetLemmatizer()
 
 def get_wordnet_pos(treebank_tag):
     """
-    return WORDNET POS compliance to WORDENT lemmatization (a,n,r,v)
+    return WORDNET POS compliance to WORDNET lemmatization (a,n,r,v)
     """
     if treebank_tag.startswith('J'):
         return wordnet.ADJ
@@ -27,6 +27,7 @@ def get_wordnet_pos(treebank_tag):
     else:
         # As default pos in lemmatization is Noun
         return wordnet.NOUN
+
 
 def lemmatize_string(text):
     """

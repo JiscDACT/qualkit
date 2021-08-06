@@ -121,6 +121,12 @@ Add the following code after the code for creating an anchored model:
     unmatched = df[(df['Topic label'] == 'No matching topic')].copy()
     df = anchored_topic_model(unmatched, 'cleaned', number_of_topics=12, print_topic_details=True)
 
+## Further reading
+
+https://medium.com/pew-research-center-decoded/overcoming-the-limitations-of-topic-models-with-a-semi-supervised-approach-b947374e0455
+
+https://transacl.org/ojs/index.php/tacl/article/view/1244
+
 ## API reference
 
 ### anchored_topic_model(_data, column, topic_names=None, anchors=None, number_of_topics=10, print_topic_details=False_)

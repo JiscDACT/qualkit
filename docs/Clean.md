@@ -23,7 +23,7 @@ If the result is an empty string, the row is removed.
 
 Returns a copy of the DataFrame.
 
-### replace_domain_terms(text, [domain_terms], replacement)
+### replace_domain_terms(text, domain_terms, replacement)
 Replaces any matches for the list of domain terms with the 
 replacement term.
 
@@ -36,6 +36,7 @@ Returns a copy of the DataFrame.
 ### lemmatize(DataFrame, column_name)
 Lemmatizes all the text in the specified column of the DataFrame.
 
-Uses the NLTK WordNetLemmatizer.
+Uses the NLTK WordNetLemmatizer in conjunction with the 
+Penn Treebank part of speech model.
 
 Returns a copy of the DataFrame.
