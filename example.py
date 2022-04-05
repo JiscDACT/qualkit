@@ -11,21 +11,21 @@ from qualkit.anchored_topic_model import anchored_topic_model, topic_metrics
 #  Finally we create a topic model for the documents that don't match the resulting model, to
 #  see if we need to modify the anchor terms.
 
-data = pd.read_csv('data/dei_student_all.csv')
-data['Unique Response Number'] = data['Unique Response Number'].astype(str)
+data = pd.read_csv('data/DEI_TS_2021.csv')
+# data['Unique Response Number'] = data['Unique Response Number'].astype(str)
 
 # always clean data first! The output is called "cleaned" in the result rather than overwrite the original data
-data = clean(data, 'Q26')
+data = clean(data, 'Q11')
 data = remove_dont_knows(data, 'cleaned')
 data = lemmatize(data, 'cleaned')
 
-topic_metrics(data,'cleaned',number_of_topics=30)
+topic_metrics(data,'cleaned', number_of_topics=20)
 
 #
 # Create a topic model with no anchor topics as a baseline
 #
 print("\nNon-anchored\n")
-df1 = anchored_topic_model(data, 'cleaned', number_of_topics=19, print_topic_details=True)
+df1 = anchored_topic_model(data, 'cleaned', number_of_topics=20, print_topic_details=True)
 
 #
 # Create an anchored topic model with suggested topics anchor terms
@@ -75,7 +75,7 @@ anchors = [
 
 #    ['long', 'screen', 'time', 'early', 'late']
 print("\nAnchored\n")
-df2 = anchored_topic_model(data, 'cleaned', topic_names=topic_names, anchors=anchors, print_topic_details=True)
+df2 = anchored_topic_model(data, 'cleaned', topic_names=topic_names, anchors=anchors, print_topic_details=True, return_csv=True)
 # manual fix for a model problem - the single word 'nothing' doesn't get allocated to a topic
 terms = df2[(df2['Topic name'] == 'Nothing/OK')]['Topic label'].values[0]
 df2.loc[df2['cleaned'] == 'nothing', 'Topic label'] = terms
