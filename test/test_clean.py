@@ -1,6 +1,6 @@
 import pandas as pd
 import qualkit.clean
-
+import pytest
 
 def test_replace_dont_knows():
     text = qualkit.clean.__replace_dont_knows__('i dont know', 'idk')
@@ -25,6 +25,64 @@ def test_lemmatize():
 def test_lemmatize_string():
     output = qualkit.clean.lemmatize_string('more seminars running helping cooks find')
     assert output == 'more seminar run help cook find'
+
+
+# More specific lemmatize tests
+# Gold Standard mainly uses output taken from here: https://cental.uclouvain.be/treetagger/
+def test_lem_isolate():
+    #starting dataframe
+    df_start = pd.DataFrame(['it is very isolating', 'i feel isolated'],
+                          columns=['Q1'])
+    #expected dataframe
+    df_expected = pd.DataFrame(['it be very isolating', 'i feel isolate'],
+                          columns=['Q1'])
+    #testing the result
+    assert qualkit.clean.lemmatize(df_start, 'Q1').equals(df_expected), 'isolating/isolated is not being lemmatised as standard'
+
+
+def test_lem_quiet():
+    #starting dataframe
+    df_start = pd.DataFrame(['it is quieter working from home', 'i can quietly get on with work in my own time'],
+                          columns=['Q1'])
+    #expected dataframe
+    df_expected = pd.DataFrame(['it be quiet work from home', 'i can quietly get on with work in my own time'],
+                          columns=['Q1'])
+    #testing the result
+    assert qualkit.clean.lemmatize(df_start, 'Q1').equals(df_expected), 'quiet is not being lemmatised as standard'
+# qualkit more eager to lemmatise than treetagger
+
+
+def test_lem_convenient():
+    #starting dataframe
+    df_start = pd.DataFrame(['i find it more convenient working from home', 'it is just the convenience really', 'the laptop conveniently connects to the remote desktop'],
+                          columns=['Q1'])
+    #expected dataframe
+    df_expected = pd.DataFrame(['i find it more convenient work from home', 'it be just the convenience really', 'the laptop conveniently connect to the remote desktop'],
+                          columns=['Q1'])
+    #testing the result
+    assert qualkit.clean.lemmatize(df_start, 'Q1').equals(df_expected), 'convenient is not being lemmatised as standard'
+# qualkit more eager to lemmatise than treetagger
+
+def test_lem_collaborate():
+    #starting dataframe
+    df_start = pd.DataFrame(['it can be more collaborative', 'it enables more collaboration', 'my students worked collaboratively with each other'],
+                          columns=['Q1'])
+    #expected dataframe
+    df_expected = pd.DataFrame(['it can be more collaborative', 'it enable more collaboration', 'my student work collaboratively with each other'],
+                          columns=['Q1'])
+    #testing the result
+    assert qualkit.clean.lemmatize(df_start, 'Q1').equals(df_expected), 'collaborate is not being lemmatised as standard'
+
+
+def test_lem_flexible():
+    #starting dataframe
+    df_start = pd.DataFrame(['i have found it more flexible', 'it allows greater flexibility'],
+                          columns=['Q1'])
+    #expected dataframe
+    df_expected = pd.DataFrame(['i have find it more flexible', 'it allow great flexibility'],
+                          columns=['Q1'])
+    #testing the result
+    assert qualkit.clean.lemmatize(df_start, 'Q1').equals(df_expected), 'flexible is not being lemmatised as standard'
 
 
 def test_remove_dont_knows():
