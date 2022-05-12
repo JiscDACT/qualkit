@@ -58,6 +58,7 @@ def __model__(tfidf, vocab, anchors, number_of_topics):
             anchors=anchors,
             anchor_strength=2  # Tells the model how much it should rely on the anchors
         )
+
     return model
 
 
@@ -87,7 +88,7 @@ def topic_metrics(data, column, number_of_topics=25):
 
 
 def anchored_topic_model(data, column, topic_filename=None, topic_names=None, anchors=None, number_of_topics=10,
-                         print_topic_details=False, return_csv=False):
+                         print_topic_details=False):
     """
     Creates a topic model using the Corex algorithm using an optional set of user-provided anchors
     :param data: a DataFrame containing a column with text to analyse
@@ -131,14 +132,6 @@ def anchored_topic_model(data, column, topic_filename=None, topic_names=None, an
     topic_labels = ['No matching topic']
     if print_topic_details:
         print("Total correlation: " + str(model.tc))
-        numberoftopics = 30
-        List_result = model.get_topics(n_words=numberoftopics)
-        list_ofwords = []
-        for x in range(1, (numberoftopics + 1)):
-            list_ofwords.append(f"Topic_{x}")
-    if return_csv == True:
-        topic_list_test = pd.DataFrame(List_result, columns=list_ofwords)
-        topic_list_test.to_csv('data\\test.csv')
     for i, topic_ngrams in enumerate(model.get_topics(n_words=10)):
         topic_ngrams = [ngram[0] for ngram in topic_ngrams if ngram[1] > 0]
         topic_label = ", ".join(topic_ngrams)
