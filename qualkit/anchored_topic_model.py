@@ -22,6 +22,10 @@ def load_topics(file):
 def __initialise_vectoriser__():
     # Initialise the vectorizer that will split the text into tokens
     # uses the TFIDF algorithm
+    # For very large datasets as a quicker option, you could fit the model on a sample of 50-100k documents,
+    # and then apply the model to the full dataset afterwards.
+    # You could also try narrowing the vocabulary by tweaking the TF-IDF vectorizer parameters and setting a max_features limit in below function.
+
     return TfidfVectorizer(
         max_df=0.25,
         min_df=5,
@@ -35,7 +39,7 @@ def __initialise_vectoriser__():
     )
 
 
-def __model__(tfidf, vocab, anchors, number_of_topics):
+def __model__(tfidf, vocab, anchors, number_of_topics, anchor_strength_int):
 
     # Filter by vocab
     if anchors is not None:
@@ -46,7 +50,7 @@ def __model__(tfidf, vocab, anchors, number_of_topics):
 
     # Create the Corex model
     model = ct.Corex(n_hidden=number_of_topics, seed=42)
-    if anchors is None:
+    if (anchors and anchor_strength_int) is None: #JC note make this for all the combos
         model = model.fit(
             tfidf,
             words=vocab
@@ -56,7 +60,7 @@ def __model__(tfidf, vocab, anchors, number_of_topics):
             tfidf,
             words=vocab,
             anchors=anchors,
-            anchor_strength=2  # Tells the model how much it should rely on the anchors
+            anchor_strength=anchor_strength_int  # Tells the model how much it should rely on the anchors
         )
 
     return model
@@ -81,14 +85,14 @@ def topic_metrics(data, column, number_of_topics=25):
     # Create the model
     results = []
     for i in range(1, number_of_topics):
-        model = __model__(tfidf, vocab, None, i)
+        model = __model__(tfidf, vocab, None, i, None)
         results.append({"topics": i, "tc": model.tc})
         print("Total correlation with " + str(i) + " topics = " + str(model.tc))
     return results
 
 
 def anchored_topic_model(data, column, topic_filename=None, topic_names=None, anchors=None, number_of_topics=10,
-                         print_topic_details=False):
+                         print_topic_details=False, anchor_strength_int=2):
     """
     Creates a topic model using the Corex algorithm using an optional set of user-provided anchors
     :param data: a DataFrame containing a column with text to analyse
@@ -98,6 +102,7 @@ def anchored_topic_model(data, column, topic_filename=None, topic_names=None, an
     :param anchors: (optional) a list containing lists of anchor terms
     :param number_of_topics: defaults to 10; the number of topics to generate (overridden if topics are supplied)
     :param print_topic_details: if true, print to console a summary of the generated topics
+    :param anchor_strength_int: defaults to 2; tells the model how much it should rely on the anchors
     :return:a DataFrame containing the original data supplied along with the 'topic label' and 'topic name' for each row
     """
 
@@ -126,7 +131,7 @@ def anchored_topic_model(data, column, topic_filename=None, topic_names=None, an
     vocab = vectorizer.get_feature_names()
 
     # Create the model
-    model = __model__(tfidf, vocab, anchors, number_of_topics)
+    model = __model__(tfidf, vocab, anchors, number_of_topics, anchor_strength_int)
 
     # Enumerate the topics from the model and create labels
     topic_labels = ['No matching topic']
@@ -149,24 +154,56 @@ def anchored_topic_model(data, column, topic_filename=None, topic_names=None, an
         index=df.index,
     )
 
+
     # Add columns for each topic
     topic_cols = ["topic_" + str(i) for i in range(1, number_of_topics + 1)]
     df_document_topic = pd.DataFrame(topic_matrix, columns=topic_cols)
     df_document_topic.insert(0, 'no topic', False, True)
 
+
     # get the dominant topic for each document, or 'no topic' if unmatched
-    dominant_topic = (np.argmax(df_document_topic.values, axis=1))
+    dominant_topic = (np.argmax(df_document_topic.values, axis=1)) # In case of multiple occurrences of the maximum values, the indices corresponding to the first occurrence are returned.
+
     df_document_topic['Dominant_topic'] = dominant_topic
     df_document_topic['Topic label'] = df_document_topic['Dominant_topic'].apply(lambda x: topic_labels[x])
     df_document_topic['Topic name'] = df_document_topic['Dominant_topic'].apply(lambda x: topic_names[x])
 
-    # remove the individual columns for topics
-    df_document_topic.drop(columns=topic_cols, inplace=True, axis=1)
-    topic_matrix.drop(columns=topic_cols, inplace=True, axis=1)
+
+
+   # JC added: Probability a document belongs to a topic given that document's words
+
+    doc_topic_probability = model.log_p_y_given_x
+
+    topic_probability_matrix = pd.DataFrame(
+        doc_topic_probability,
+        columns=["topic_probability_{}".format(i) for i in range(1, number_of_topics + 1)],
+        index=df.index,
+    )
+    # Add column for probability for each topic
+
+    topic_probability_cols = ["topic_probability_" + str(i) for i in range(1, number_of_topics + 1)]
+    df_document_topic_probability = pd.DataFrame(topic_probability_matrix, columns=topic_probability_cols)
+
+
+    # 2nd dominant topic
+
+    #second_topic = np.argsort(np.argmax(df_document_topic.values, axis=1))[1]
+    #df_document_topic['Second_topic'] = second_topic
+    #df_document_topic['Second label'] = df_document_topic['Second_topic'].apply(lambda x: topic_labels[x])
+    #df_document_topic['Second Topic name'] = df_document_topic['Second_topic'].apply(lambda x: topic_names[x])
+
+# remove the individual columns for topics
+    # df_document_topic.drop(columns=topic_cols, inplace=True, axis=1)
+    # topic_matrix.drop(columns=topic_cols, inplace=True, axis=1)
 
     # join the results back to the original dataframe and return
     topic_matrix = pd.merge(topic_matrix, df_document_topic[['Topic label', 'Topic name']],
                             left_index=True, right_index=True, how='outer')
     results = pd.merge(df, topic_matrix, left_index=True, right_index=True, how='outer')
 
+    # Topic probability to original
+    results = pd.merge(results, df_document_topic_probability, left_index=True, right_index=True, how='outer')
+
     return results
+
+

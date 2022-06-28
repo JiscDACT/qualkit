@@ -111,6 +111,32 @@ that includes the topics as well as the original data you supplied:
     df = anchored_topic_model(data, 'cleaned', topic_names=topic_names, anchors=anchors, print_topic_details=True)
     df.to_csv('output.csv')
 
+## Output
+
+The topic model will append a column for each topic and will indicate whether that row of data (for a particular response) is True or False for that topic. 
+This enables you to assess responses which may fall into multiple topics.
+
+For instance, the last response here (fake responses) covers two topics:
+
+| Q12 (What are positive aspects of online learning?) | topic_1 (time) | topic_2 (sleep) | topic_3 (Replay) |
+|-----------------------------------------------------|----------------|-----------------|------------------|
+| Learning online gives me more time                  | True           | False           | False            |
+| I can rewatch lectures                              | False          | False           | True             |
+| I can get more sleep in and gives me more time      | True           | True            | False            |
+
+**To Do / In Progress**
+
+Model also appends probability a document belongs to a topic given that document's words (using log_p_y_given_x) but as this
+is not a discriminative model, CorEx estimates probability a document belongs to a topic separately for each topic (probabilities don't add to 1)
+
+Methods to get document for each topic in future.
+1. Use the p_y_given_x attribute or log_p_y_given_x attributes to rank which documents are most probable for each topic. 
+2. Get a binary classification of each document in each topic from labels (which applies a softmax from p_y_given_x).
+3. You can also use log_z to rank which documents are "explained" the most by each topic according to pointwise total correlation. 
+
+Most simple: Using labels or p_y_given_x
+
+
 ## Analysing unmatched terms
 It can be useful, certainly in the initial stages of modelling, to see if there are
 any patterns in the unmatched terms that suggest changes to the model. To do this,
@@ -157,6 +183,12 @@ Information taken from the following [resource](https://notebook.community/gregv
 
 ## Anchor Strength
 
+This can be added as an argument, if not specified defaults to 2:
+
+`anchored_topic_model(data, column, topic_filename=None, topic_names=None, anchors=None, number_of_topics=10,
+                         print_topic_details=False, anchor_strength_int=2)`
+
+
 Choosing anchor strength: the anchor strength controls how much weight CorEx puts 
 towards maximizing the mutual information between the anchor words and their respective topics. 
 Anchor strength should always be set at a value greater than 1, since setting anchor strength 
@@ -196,3 +228,5 @@ https://transacl.org/ojs/index.php/tacl/article/view/1244
 **number_of_topics** _default=10_ the number of topics to generate.
 
 **print_topic_details** _default=False_ prints to the console the topics generated and their top 10 terms
+
+**anchor_strength_int** _default=2_ An integer to assign anchor strength for the topic model
