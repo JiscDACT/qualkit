@@ -121,6 +121,60 @@ Add the following code after the code for creating an anchored model:
     unmatched = df[(df['Topic label'] == 'No matching topic')].copy()
     df = anchored_topic_model(unmatched, 'cleaned', number_of_topics=12, print_topic_details=True)
 
+## Different approaches to Anchor terms
+Anchor terms can be included in different ways:
+1. **Anchoring a single set of words to a single topic**. This can help promote a topic that 
+did not naturally emerge when running an unsupervised instance of the CorEx topic model. 
+For example, one might anchor words like "snow," "cold," and "avalanche" to a topic if 
+one suspects there should be a snow avalanche topic within a set of disaster relief articles. 
+    
+   
+    anchor_words = [['snow', 'cold', 'avalanche']]
+2. **Anchoring single sets of words to multiple topics**. This can help find different aspects 
+of a topic that may be discussed in several different contexts. For example, one might anchor 
+"protest" to three topics and "riot" to three other topics to understand different framings 
+that arise from tweets about political protests.
+
+
+    anchor_words = ['protest', 'protest', 'protest', 'riot', 'riot', 'riot']
+3. **Anchoring different sets of words to multiple topics**. This can help enforce topic separability 
+if there appear to be chimera topics. For example, one might anchor "mountain," "Bernese," and "dog" 
+to one topic and "mountain," "rocky," and "colorado" to another topic to help separate topics that 
+merge discussion of Bernese Mountain Dogs and the Rocky Mountains.
+
+
+    anchor_words = [['bernese', 'mountain', 'dog'], ['mountain', 'rocky', 'colorado']]
+
+
+Examples of a more detailed strategy:
+
+Here we anchor "nasa" by itself, as well as in two other topics each with "politics" and "news" to find different 
+aspects around the word "nasa". We also create a fourth anchoring of "war" to a topic.
+
+    anchor_words = ['nasa', ['nasa', 'politics'], ['nasa', 'news'], 'war']
+
+Information taken from the following [resource](https://notebook.community/gregversteeg/corex_topic/corextopic/example/corex_topic_example).
+
+## Anchor Strength
+
+Choosing anchor strength: the anchor strength controls how much weight CorEx puts 
+towards maximizing the mutual information between the anchor words and their respective topics. 
+Anchor strength should always be set at a value greater than 1, since setting anchor strength 
+between 0 and 1 only recovers the unsupervised CorEx objective. Empirically, setting anchor strength 
+from 1.5-3 seems to nudge the topic model towards the anchor words. Setting anchor strength 
+greater than 5 is strongly enforcing that the CorEx topic model find a topic associated with the anchor words.
+
+Anchor strength represents the relative amount of weight that CorEx assigns to a word relative to other words. 
+So if the anchor strength is 2, then CorEx gives twice the weight to that word relative to all other words. 
+The second is that the higher the anchor strength, the less room the topic model has to find topics 
+because you have already dictated what the topics should be. Avoid setting anchor strength in the thousands, 
+or even the hundreds, because that's likely going to force all of the anchor words to be the top topic words, 
+and at that point you're probably better off with a keyword approach than a topic model. 
+So I would check that the topics you're getting still have some flexibility to them after you set the anchor
+strength. If you're only seeing the anchor words as the top topic words, the anchor strength may be set too 
+aggressively.
+
+
 ## Further reading
 
 https://medium.com/pew-research-center-decoded/overcoming-the-limitations-of-topic-models-with-a-semi-supervised-approach-b947374e0455

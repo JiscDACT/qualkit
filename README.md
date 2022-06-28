@@ -24,6 +24,15 @@ Install using:
 Or add 'qualkit' to your requirements.txt file, or add as
 a dependency in project properties in PyCharm.
 
+## User Control
+A user has control over the following aspects when using this toolkit which will influence outputs.
+
+* Anchoring strategies
+* Anchor Strength
+* Number of topics
+* Labelling True/False for each topic instead of dichotomising
+* How data is preprocessed before topic modelling, redaction, tfidr vectoriser etec
+
 ## References
 
 Gallagher, R. J., Reing, K., Kale, D., and Ver Steeg, G. "Anchored Correlation Explanation: Topic Modeling with Minimal Domain Knowledge." Transactions of the Association for Computational Linguistics (TACL), 2017.
