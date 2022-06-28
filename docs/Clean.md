@@ -30,7 +30,7 @@ is True then the original content is overwritten.
 
 Returns a copy of the DataFrame.
 
-## clean_without_domain(data, columns, inplace=False)
+### clean_without_domain(data, columns, inplace=False)
 
 As above but does not perform the replace domain specific synonym 
 function as sometimes this information needs to be retained. 
