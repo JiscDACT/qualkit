@@ -30,6 +30,12 @@ is True then the original content is overwritten.
 
 Returns a copy of the DataFrame.
 
+## clean_without_domain(data, columns, inplace=False)
+
+As above but does not perform the replace domain specific synonym 
+function as sometimes this information needs to be retained. 
+For example, when asked which app has been most useful.
+
 ### replace_domain_terms(text, domain_terms, replacement)
 Replaces any matches for the list of domain terms with the 
 replacement term.
