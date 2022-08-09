@@ -1,5 +1,5 @@
 pandas~=1.1.5
-numpy~=1.19.5
+numpy~=1.23.1
 nltk~=3.6.2
 scikit-learn~=0.24.2
 corextopic~=1.1

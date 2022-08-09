@@ -252,7 +252,6 @@ def clean(data, columns, inplace=False, online_learning_platform_list=None, onli
         df = __clean__(df, column, inplace, online_learning_platform_list, online_meeting_tool_list, domain_term, domain_string)
     return df
 
-
     # Clean without domain for summarising apps
 
 def __clean_without_domains__(df, column, inplace):
