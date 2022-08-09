@@ -1,6 +1,6 @@
 from setuptools import setup
 
-VERSION = '0.1.5'
+VERSION = '0.1.5'  # change this when you want to push new version to PyPi through GH Actions
 
 setup(
     name='qualkit',
